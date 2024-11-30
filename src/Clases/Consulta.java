@@ -16,6 +16,9 @@ public class Consulta implements Serializable{
     protected LocalTime hora;
     protected String mensaje;
 
+    public Consulta() {
+    }
+
     public Consulta( String mensaje) {
         this.mensaje = mensaje;
     }
@@ -38,15 +41,16 @@ public class Consulta implements Serializable{
 
     @Override
     public String toString() {
-        return "Consulta{" + "hora=" + hora + ", mensaje=" + mensaje + '}';
+        return "Consulta: "+ mensaje + " hora: " + hora;
     }
     
     
     
-    public String Consultar(String mensaje){
-        hora=LocalTime.now();
-        
-        return mensaje +" "+ hora;   
+    public String registrarConsulta(String consulta) {
+        this.hora = LocalTime.now(); // Asigna la hora actual
+        this.mensaje = consulta; // Asigna el mensaje recibido
+        // Devuelve el mensaje con la hora
+        return "Consulta registrada a las " + hora + ": " + mensaje;
     }
     
 }
