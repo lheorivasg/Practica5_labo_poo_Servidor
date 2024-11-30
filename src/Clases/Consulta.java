@@ -19,6 +19,29 @@ public class Consulta implements Serializable{
     public Consulta( String mensaje) {
         this.mensaje = mensaje;
     }
+
+    public LocalTime getHora() {
+        return hora;
+    }
+
+    public void setHora(LocalTime hora) {
+        this.hora = hora;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    @Override
+    public String toString() {
+        return "Consulta{" + "hora=" + hora + ", mensaje=" + mensaje + '}';
+    }
+    
+    
     
     public String Consultar(String mensaje){
         hora=LocalTime.now();
