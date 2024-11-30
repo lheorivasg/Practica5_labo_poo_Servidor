@@ -17,10 +17,14 @@ import java.util.Map;
  */
 public class Bot extends Consulta {
 
-    public Bot(String mensaje) {
-        super(mensaje);
+    public Bot() {
     }
+
     
+    public Bot(Consulta c) {
+        
+    }
+
     
     
     /**
