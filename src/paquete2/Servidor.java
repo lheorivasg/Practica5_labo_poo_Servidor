@@ -7,16 +7,13 @@ package paquete2;
 
 import Clases.Bot;
 import Clases.Consulta;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 
 /**
@@ -27,54 +24,53 @@ public class Servidor{
 
     public static void main(String[] args) {
 
-        Consulta c;
-        ServerSocket servidor;
-        ObjectInputStream in;
-        ObjectOutputStream out;
-        Socket s1;
+        ServerSocket servidor = null;
 
         try {
+            // Crear el servidor en el puerto 12345
             servidor = new ServerSocket(12345);
+            System.out.println("Servidor iniciado. Esperando conexiones...");
+
             while (true) {
-                System.out.println("Servidor en espera...");
-                //acepta la conexion
-                s1= servidor.accept();
-                System.out.println("Conexion Aceptada");
-                
-                //in & out para recibir y andar objetos
-                in = new ObjectInputStream(s1.getInputStream());
-                out = new ObjectOutputStream(s1.getOutputStream());
-                
-                // Leer consulta del cliente
-                c = (Consulta)in.readObject();
-                System.out.println("Consulta recibida!\n " + c);
-                System.out.println("Objeto Deserializado...");
-                
-                //Procesar consulta con la clase Bot
-//                Bot bot1 = new Bot(c);
-//                String respuesta = bot1.procesarConsulta(c);
+                // Esperar conexión de un cliente
+                Socket cliente = servidor.accept();
+                System.out.println("Conexión aceptada de: " + cliente.getInetAddress().getHostAddress());
+
+                // Streams para comunicación
+                ObjectInputStream in = new ObjectInputStream(cliente.getInputStream());
+                ObjectOutputStream out = new ObjectOutputStream(cliente.getOutputStream());
+
+                // Leer la consulta del cliente
+                Consulta consulta = (Consulta) in.readObject();
+                System.out.println("Consulta recibida: " + consulta);
+
+                // Procesar la consulta usando el Bot
+                Bot bot = new Bot();
+                String respuesta = bot.procesarConsulta(consulta);
 
                 // Enviar respuesta al cliente
-                String respuesta="una respuesta xd";    //Esta linea la borras y dejas la de arriba, la que debe procesar el bot
                 out.writeObject(respuesta);
                 out.flush();
+                System.out.println("Respuesta enviada al cliente.");
 
-                // Cerrar conexión
+                // Cerrar recursos
                 in.close();
                 out.close();
-                s1.close();
-                System.out.println("Conexión cerrada.");
-                
+                cliente.close();
+                System.out.println("Conexión cerrada con el cliente.");
             }
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("Excepcion " + ex.getMessage());
-        } catch (IOException ex2) {
-            System.out.println("Excepcion " + ex2.getMessage());
-        } catch (ClassNotFoundException ex3) {
-            System.out.println("Excepcion " + ex3.getMessage());
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error en el servidor: " + e.getMessage());
+        } finally {
+            if (servidor != null) {
+                try {
+                    servidor.close();
+                    System.out.println("Servidor cerrado.");
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el servidor: " + e.getMessage());
+                }
+            }
         }
-
     }
 
 }

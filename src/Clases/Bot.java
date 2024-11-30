@@ -49,13 +49,15 @@ public class Bot extends Consulta {
      * <li>El tiempo que tomó generar la respuesta.</li>
      * </ul>
      */
-    public String procesarConsulta(Consulta consulta){
+    public String procesarConsulta(Consulta consulta) {
+        if (consulta == null || consulta.getMensaje() == null) {
+            return "Error: La consulta o el mensaje es nulo.";
+        }
         String mensajeOriginal = consulta.getMensaje();
-        
+
         //Registro de tiempo de inicio
         LocalTime inicio = LocalTime.now();
-        
-        
+
         //Limpieza de texto
         String textoSinSignos = eliminarSignosPuntuacion(mensaje);
         String textoLimpio = eliminarPalabrasVacias(textoSinSignos);

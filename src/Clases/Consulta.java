@@ -13,6 +13,8 @@ import java.time.LocalTime;
  * @author Alumno11
  */
 public class Consulta implements Serializable{
+    private static final long serialVersionUID = 1L; //Serial Version UID agregado
+    
     protected LocalTime hora;
     protected String mensaje;
 
