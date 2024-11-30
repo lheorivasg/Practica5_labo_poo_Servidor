@@ -22,6 +22,29 @@ public class Bot extends Consulta {
     }
     
     
+    
+    /**
+     * Procesa una consulta realizada al bot, realizando las siguientes
+     * operaciones:
+     * <ul>
+     * <li>Elimina signos de puntuación del mensaje.</li>
+     * <li>Elimina palabras vacías del mensaje.</li>
+     * <li>Cuenta signos de puntuación, palabras vacías eliminadas y palabras
+     * clave restantes.</li>
+     * <li>Determina la respuesta adecuada basada en las palabras clave.</li>
+     * <li>Calcula el tiempo de respuesta del bot en milisegundos.</li>
+     * </ul>
+     *
+     * @param consulta
+     * @return Un String con informacion detallada que incluye:
+     * <ul>
+     * <li>Número de palabras vacías eliminadas.</li>
+     * <li>Número de palabras clave encontradas.</li>
+     * <li>Número de signos de puntuación detectados.</li>
+     * <li>La respuesta generada por el bot.</li>
+     * <li>El tiempo que tomó generar la respuesta.</li>
+     * </ul>
+     */
     public String procesarConsulta(Consulta consulta){
         String mensajeOriginal = consulta.getMensaje();
         
@@ -60,7 +83,7 @@ public class Bot extends Consulta {
     /**
      * Metodo para contar la cantidad de signos de puntuacion del codigo original
      * @param texto
-     * @return 
+     * @return Numero de Signos de puntuacion en el texto
      */
     public int contarSignosPuntuacion(String texto){
         return texto.length() - texto.replaceAll("[,\\\\.¡!¿?()]", "").length();
@@ -69,9 +92,9 @@ public class Bot extends Consulta {
     
     
     /**
-     * 
+     * Metodo para eliminar palabtas vacias de un texto
      * @param texto
-     * @return 
+     * @return Texto sin palabras vacias
      */
     public String eliminarPalabrasVacias(String texto){
         String[] palabrasVacias = {"la", "de", "el", "del", "para", "este", "los", "a", "cuando",
@@ -83,16 +106,17 @@ public class Bot extends Consulta {
     
     
     /**
-     * 
+     * Metodo para identificar la cantidad de palabras vacias en el texto
      * @param textoOriginal
      * @param textoLimpio
-     * @return 
+     * @return Numero de palabras vacias
      */
     public int contarPalabrasVaciasEliminadas(String textoOriginal, String textoLimpio){
         int totalOriginal = textoOriginal.split("\\s+").length;
         int totalLimpio = textoLimpio.split("\\s+").length;
         return totalOriginal - totalLimpio;
     }
+    
     
     
     
@@ -113,11 +137,11 @@ public class Bot extends Consulta {
     
     
     /**
-     * 
-     * @param textoLimpio
-     * @return 
+     * Metodo para darle una respuesta predefinida al usuario de acuerdo a su consulta
+     * @param textoOriginal
+     * @return Texto de respuesta
      */
-    public String buscarRespuestaOptimizada(String textoLimpio){
+    public String buscarRespuestaOptimizada(String textoOriginal){
         Map<String[], String> respuestas = new HashMap<>();
         respuestas.put(new String[]{"uam", "azcapotzalco"}, "");
         respuestas.put(new String[]{"uam"}, "");
@@ -130,7 +154,7 @@ public class Bot extends Consulta {
             boolean contieneTodas = true;
             
             for(String palabra : palabrasClave){
-                if(!textoLimpio.contains(palabra)){
+                if(!textoOriginal.contains(palabra)){
                     contieneTodas = false;
                     break;
                 }
@@ -141,7 +165,7 @@ public class Bot extends Consulta {
             
         }
         
-        int palabrasClave = contarPalabrasClave(textoLimpio);
+        int palabrasClave = contarPalabrasClave(textoOriginal);
         if(palabrasClave >= 3){
             return "No tengo la informacion acerca de la consulta";
         }else{
@@ -155,8 +179,14 @@ public class Bot extends Consulta {
     
     
     /**
+     * Prepara la respuesta completa que sera devuelta al usuario.
      * 
-     * @return 
+     * @param signosPuntuacion
+     * @param palabrasVaciasEliminadas
+     * @param palabrasClave
+     * @param respuesta
+     * @param tiempoRespuesta
+     * @return Un String que incluye toda la informacion relevante del procesamiento
      */
     public String prepararRespuesta(int signosPuntuacion, int palabrasVaciasEliminadas, int palabrasClave,
                                     String respuesta, long tiempoRespuesta){
