@@ -96,79 +96,90 @@ public class Bot extends Consulta {
      * @param texto
      * @return Texto sin palabras vacias
      */
-    public String eliminarPalabrasVacias(String texto){
+    public String eliminarPalabrasVacias(String texto) {
         String[] palabrasVacias = {"la", "de", "el", "del", "para", "este", "los", "a", "cuando",
-                                   "son", "con", "al", "como", "cual", "que", "y"};
-        
+            "son", "con", "al", "como", "cual", "que", "y"};
+
         String regex = "\\b(" + String.join("|", palabrasVacias) + ")\\b";
         return texto.replaceAll(regex, "").replaceAll("\\s+", " ").trim();
     }
-    
-    
+
     /**
      * Metodo para identificar la cantidad de palabras vacias en el texto
+     * 
      * @param textoOriginal
      * @param textoLimpio
      * @return Numero de palabras vacias
      */
-    public int contarPalabrasVaciasEliminadas(String textoOriginal, String textoLimpio){
+    public int contarPalabrasVaciasEliminadas(String textoOriginal, String textoLimpio) {
         int totalOriginal = textoOriginal.split("\\s+").length;
         int totalLimpio = textoLimpio.split("\\s+").length;
         return totalOriginal - totalLimpio;
     }
-    
-    
-    
+
     
     /**
-     * 
+     * Metodo para identidicar las palabras clave dentro del texto
+     *
      * @param textoLimpio
-     * @return 
+     * @return Numero de palabras clave
      */
-    public int contarPalabrasClave(String textoLimpio){
-        if(textoLimpio.isEmpty()){
+    public int contarPalabrasClave(String textoLimpio) {
+        if (textoLimpio.isEmpty()) {
             return 0;
         }
         return textoLimpio.split("\\s+").length;
     }
-    
-    
+
     
     
     
     /**
-     * Metodo para darle una respuesta predefinida al usuario de acuerdo a su consulta
-     * @param textoOriginal
+     * Metodo para darle una respuesta predefinida al usuario de acuerdo a su
+     * consulta
+     *
+     * @param textoLimpio
      * @return Texto de respuesta
      */
-    public String buscarRespuestaOptimizada(String textoOriginal){
+    public String buscarRespuestaOptimizada(String textoLimpio) {
         Map<String[], String> respuestas = new HashMap<>();
-        respuestas.put(new String[]{"uam", "azcapotzalco"}, "");
-        respuestas.put(new String[]{"uam"}, "");
-        respuestas.put(new String[]{"servicio", "medico"}, "");
-        respuestas.put(new String[]{"servicios", "escolares"}, "");
-        respuestas.put(new String[]{"covid", "escolares"}, "");
-        
-        for(Map.Entry<String[], String> entry : respuestas.entrySet()){
+        respuestas.put(new String[]{"uam", "azcapotzalco"}, "La Universidad Autónoma Metropolitana Unidad Azcapotzalco actualmente cuenta con 17\n"
+                + "licenciaturas, divididas en 3 áreas de estudio.\n"
+                + "Visita: https://www.azc.uam.mx/");
+        respuestas.put(new String[]{"uam"}, "Fundada en 1974 y con más de 200 mil personas egresadas, la UAM es una institución pública que\n"
+                + "ofrece en sus cinco unidades académicas.\n"
+                + "Visita: https://www.uam.mx/");
+        respuestas.put(new String[]{"servicio", "medico"}, "Proporcionamos atención médica a los miembros de la comunidad universitaria. Contamos con 5\n"
+                + "médicos y 4 consultorios, solo debes presentar tu credencial de la UAM.\n"
+                + "Visita: https://csu.azc.uam.mx/medicos/");
+        respuestas.put(new String[]{"servicios", "escolares"}, "La Coordinación de Sistemas Escolares, administra los procesos, entre los que se encuentran el\n"
+                + "registro, seguimiento y control del ingreso, permanencia y egreso de los alumnos de Licenciatura y\n"
+                + "Posgrado.\n"
+                + "Visita: http://cse.azc.uam.mx/");
+        respuestas.put(new String[]{"covid", "escolares"}, "Es una nueva aplicación para conocer el estado de salud de la comunidad UAM en el regreso\n"
+                + "presencial.\n"
+                + "Visita: https://coviuam.uam.mx/");
+
+        for (Map.Entry<String[], String> entry : respuestas.entrySet()) {
             String[] palabrasClave = entry.getKey();
             boolean contieneTodas = true;
-            
-            for(String palabra : palabrasClave){
-                if(!textoOriginal.contains(palabra)){
+
+            for (String palabra : palabrasClave) {
+                if (!textoLimpio.contains(palabra)) {
                     contieneTodas = false;
                     break;
                 }
             }
-            if(contieneTodas){
+            if (contieneTodas) {
                 return entry.getValue();
             }
-            
+
         }
-        
-        int palabrasClave = contarPalabrasClave(textoOriginal);
-        if(palabrasClave >= 3){
+
+        int palabrasClave = contarPalabrasClave(textoLimpio);
+        if (palabrasClave >= 3) {
             return "No tengo la informacion acerca de la consulta";
-        }else{
+        } else {
             return "No entiendo la consulta :(";
         }
 
