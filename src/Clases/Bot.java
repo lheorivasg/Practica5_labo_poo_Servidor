@@ -53,18 +53,19 @@ public class Bot extends Consulta {
         if (consulta == null || consulta.getMensaje() == null) {
             return "Error: La consulta o el mensaje es nulo.";
         }
-        String mensajeOriginal = consulta.getMensaje();
+        String mensajeOriginal = consulta.getMensaje().toLowerCase();
 
         //Registro de tiempo de inicio
         LocalTime inicio = LocalTime.now();
 
         //Limpieza de texto
-        String textoSinSignos = eliminarSignosPuntuacion(consulta.getMensaje());
+        String textoSinSignos = eliminarSignosPuntuacion(mensajeOriginal);
+        int signosPuntuacion = contarSignosPuntuacion(mensajeOriginal);  
         String textoLimpio = eliminarPalabrasVacias(textoSinSignos);
-        int signosPuntuacion = contarSignosPuntuacion(mensajeOriginal);
-        int palabrasVaciasEliminadas = contarPalabrasVaciasEliminadas(mensajeOriginal, textoLimpio);
+        int palabrasVaciasEliminadas = contarPalabrasVaciasEliminadas(textoSinSignos, textoLimpio);
         int palabrasClave = contarPalabrasClave(textoLimpio);
-        String respuesta = buscarRespuestaOptimizada(textoLimpio);
+        String respuesta = buscarRespuestaOptimizada(mensajeOriginal);
+
         
         
         LocalTime fin = LocalTime.now();
@@ -185,7 +186,7 @@ public class Bot extends Consulta {
                 + "registro, seguimiento y control del ingreso, permanencia y egreso de los alumnos de Licenciatura y\n"
                 + "Posgrado.\n"
                 + "Visita: http://cse.azc.uam.mx/");
-        respuestas.put(new String[]{"covid", "escolares"}, "Es una nueva aplicación para conocer el estado de salud de la comunidad UAM en el regreso\n"
+        respuestas.put(new String[]{"covid"}, "Es una nueva aplicación para conocer el estado de salud de la comunidad UAM en el regreso\n"
                 + "presencial.\n"
                 + "Visita: https://coviuam.uam.mx/");
 
