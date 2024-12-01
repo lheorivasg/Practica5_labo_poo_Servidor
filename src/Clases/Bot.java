@@ -59,7 +59,7 @@ public class Bot extends Consulta {
         LocalTime inicio = LocalTime.now();
 
         //Limpieza de texto
-        String textoSinSignos = eliminarSignosPuntuacion(mensaje);
+        String textoSinSignos = eliminarSignosPuntuacion(consulta.getMensaje());
         String textoLimpio = eliminarPalabrasVacias(textoSinSignos);
         int signosPuntuacion = contarSignosPuntuacion(mensajeOriginal);
         int palabrasVaciasEliminadas = contarPalabrasVaciasEliminadas(mensajeOriginal, textoLimpio);
@@ -80,10 +80,14 @@ public class Bot extends Consulta {
      * @param texto
      * @return Texto sin los signos de puntuacion
      */
-    public String eliminarSignosPuntuacion(String texto){
+    public String eliminarSignosPuntuacion(String texto) {
+        if (texto == null) {
+            System.err.println("Error: Mensaje nulo en eliminarSignosPuntuacion.");
+            return "";
+        }
         return texto.replaceAll("[,\\\\.¡!¿?()]", "");
     }
-    
+
     
     
     /**
@@ -92,6 +96,10 @@ public class Bot extends Consulta {
      * @return Numero de Signos de puntuacion en el texto
      */
     public int contarSignosPuntuacion(String texto){
+        if(texto == null){
+            System.out.println("Error: Texto nulo en contarSignosPuntuacion.");
+            return 0;
+        }
         return texto.length() - texto.replaceAll("[,\\\\.¡!¿?()]", "").length();
     }
     
@@ -103,6 +111,10 @@ public class Bot extends Consulta {
      * @return Texto sin palabras vacias
      */
     public String eliminarPalabrasVacias(String texto) {
+        if(texto == null){
+            return "";
+        }
+        
         String[] palabrasVacias = {"la", "de", "el", "del", "para", "este", "los", "a", "cuando",
             "son", "con", "al", "como", "cual", "que", "y"};
 
@@ -118,6 +130,10 @@ public class Bot extends Consulta {
      * @return Numero de palabras vacias
      */
     public int contarPalabrasVaciasEliminadas(String textoOriginal, String textoLimpio) {
+        if(textoOriginal == null || textoLimpio == null){
+            return 0;
+        }
+        
         int totalOriginal = textoOriginal.split("\\s+").length;
         int totalLimpio = textoLimpio.split("\\s+").length;
         return totalOriginal - totalLimpio;
@@ -131,7 +147,7 @@ public class Bot extends Consulta {
      * @return Numero de palabras clave
      */
     public int contarPalabrasClave(String textoLimpio) {
-        if (textoLimpio.isEmpty()) {
+        if (textoLimpio == null || textoLimpio.isEmpty()) {
             return 0;
         }
         return textoLimpio.split("\\s+").length;
@@ -148,6 +164,13 @@ public class Bot extends Consulta {
      * @return Texto de respuesta
      */
     public String buscarRespuestaOptimizada(String textoLimpio) {
+        if (textoLimpio == null) {
+            System.err.println("Error: Texto nulo en buscarRespuestaOptimizada.");
+            return "Error: No se puede procesar la consulta.";
+        }
+        
+        
+        
         Map<String[], String> respuestas = new HashMap<>();
         respuestas.put(new String[]{"uam", "azcapotzalco"}, "La Universidad Autónoma Metropolitana Unidad Azcapotzalco actualmente cuenta con 17\n"
                 + "licenciaturas, divididas en 3 áreas de estudio.\n"
@@ -197,20 +220,24 @@ public class Bot extends Consulta {
     
     /**
      * Prepara la respuesta completa que sera devuelta al usuario.
-     * 
+     *
      * @param signosPuntuacion
      * @param palabrasVaciasEliminadas
      * @param palabrasClave
      * @param respuesta
      * @param tiempoRespuesta
-     * @return Un String que incluye toda la informacion relevante del procesamiento
+     * @return Un String que incluye toda la informacion relevante del
+     * procesamiento
      */
     public String prepararRespuesta(int signosPuntuacion, int palabrasVaciasEliminadas, int palabrasClave,
-                                    String respuesta, long tiempoRespuesta){
-    
-           return String.format(
-                   "Palabras vacías eliminadas: %d\\nPalabras clave: %d\\nSignos de puntuación: %d\\nRespuesta: %s\\nTiempo de respuesta: %d ms",
-                    palabrasVaciasEliminadas, palabrasClave, signosPuntuacion, respuesta, tiempoRespuesta);
-    
+            String respuesta, long tiempoRespuesta) {
+        return String.format(
+                "Palabras vacías eliminadas: %d\n"
+                + "Palabras clave: %d\n"
+                + "Signos de puntuación: %d\n"
+                + "Respuesta: %s\n"
+                + "Tiempo de respuesta: %d ms",
+                palabrasVaciasEliminadas, palabrasClave, signosPuntuacion, respuesta, tiempoRespuesta);
     }
+
 }
